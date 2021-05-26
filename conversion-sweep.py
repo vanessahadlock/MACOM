@@ -332,7 +332,7 @@ def tx_p1db(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_mxg, lo_mxg,
             header_info = "Pout(dBm), RF {}GHz, LO {}GHz, IF {}GHz".format(rf_freq[j], lo_freq, if_freq[i])
             worksheet_upc_p1db.write(0, col, header_info)
 
-            header_info_raw = "Pou_raw(dBm), RF {}GHz, LO {}GHz, IF {}GHz".format(rf_freq[j], lo_freq, if_freq[i])
+            header_info_raw = "Pout_raw(dBm), RF {}GHz, LO {}GHz, IF {}GHz".format(rf_freq[j], lo_freq, if_freq[i])
             worksheet_upc_p1db_raw.write(0, col, header_info_raw)
 
             for k in range(0, len(if_pin)):
@@ -817,7 +817,7 @@ def main():
     if_freq_ghz = [5.25, 5.57]
 
     # RF frequency definition
-    rf_freq_ghz = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36]
+    rf_freq_ghz = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46]
 
     # Generates a list of LO frequencies calculated from the the IF and RF frequencies
     lo_freq_ghz = synth_freq_gen(if_freq_ghz, rf_freq_ghz, "lower", 4)
@@ -826,8 +826,8 @@ def main():
     lo_input_dbm = 15  # LO Input Power is typically 15 dBm, defined in the datasheet
 
     # RF or IF power max are both 20 dBm
-    if_upc_input_dbm = -20  # Upconvert IF power input, this is to match datasheet parameters
-    rf_dnc_input_dbm = -40  # Downconvert RF power input, this is to match datasheet parameters
+    if_upc_input_dbm = 0  # Upconvert IF power input, this is to match datasheet parameters
+    rf_dnc_input_dbm = 0  # Downconvert RF power input, this is to match datasheet parameters
 
     if_tx_p1db_start_dbm = -15  # Adjusting the starting pin to save time
     rf_rx_p1db_start_dbm = -20
@@ -836,21 +836,21 @@ def main():
 
     # Define the cable loss parameters
     # Need to remeasure with the new cables
-    if_cable_loss_db = 1.28
-    lo_cable_loss_db = 1.36
-    rf_cable_loss_db = 3.3
+    if_cable_loss_db = 0.5
+    lo_cable_loss_db = 0.5
+    rf_cable_loss_db = 0.5
 
     # Define the PCB loss parameters
-    if_upc_pcb_loss_db = 1
-    if_dnc_pcb_loss_db = 1
-    lo_pcb_loss_db = 1.38
-    rf_pcb_loss_db = 1.63
+    if_upc_pcb_loss_db = 0.5
+    if_dnc_pcb_loss_db = 0.5
+    lo_pcb_loss_db = 0.5
+    rf_pcb_loss_db = 0.5
 
     # Cable Loss parameters for the combiner and cables
-    path1_loss_5 = 7.96
-    path2_loss_5 = 8
-    path1_loss_40 = 15
-    path2_loss_40 = 14.5
+    path1_loss_5 = 0.5
+    path2_loss_5 = 0.5
+    path1_loss_40 = 0.5
+    path2_loss_40 = 0.5
 
     out_cable_loss_5 = 1
     out_cable_loss_40 = 3.3
@@ -860,10 +860,10 @@ def main():
     dnc_rf_max_pin = 5  # There is not a set value for this
 
     # Initialize the test equipment
-    if_rf_mxg = SignalGenerator('MXG2.posh.shivnet')
-    lo_mxg = SignalGenerator('RF-MXG.posh.shivnet')
-    specan = SignalAnalyzer('FSV40.posh.shivnet')
-    if_rf_mxg2_name = 'CALIBRATION-SG.posh.shivnet'
+    if_rf_mxg = SignalGenerator('10.13.23.221')
+    lo_mxg = SignalGenerator('10.13.23.217')
+    specan = SignalAnalyzer('10.13.23.222')
+    if_rf_mxg2_name = 'CALIBRATION-SG.ginger.shivnet'
 
     # Set the default parameters on the test equipment
     if_rf_mxg.off()
