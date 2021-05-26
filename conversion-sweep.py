@@ -67,11 +67,11 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
     if_frequencies = []
     lo_frequencies = []
     rf_frequencies = []
+    lo_power = []
     raw_pout = []
 
     # Set the mxg power levels
     if_mxg.set_amplitude(if_pin + if_loss)
-    lo_mxg.set_amplitude(lo_pin + lo_loss)
 
     # Turn on the mxgs
     if_mxg.on()
@@ -82,24 +82,30 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
         if_mxg.set_frequency(if_freq[i] * 1e9)
         time.sleep(0.5)
 
-        for j in range(0, len(rf_freq)):
-            # Set the specan frequency
-            specan.set_frequency(rf_freq[j] * 1e9)
+        for k in range(0, len(lo_pin)):
+            # Set the LO mxg
+            lo_mxg.set_amplitude(lo_pin[k] + lo_loss)
             time.sleep(0.5)
 
-            # Set the lo frequency
-            lo_freq = (rf_freq[j] + if_freq[i]) / 4
-            lo_mxg.set_frequency(lo_freq * 1e9)
-            time.sleep(0.5)
+            for j in range(0, len(rf_freq)):
+                # Set the specan frequency
+                specan.set_frequency(rf_freq[j] * 1e9)
+                time.sleep(0.5)
 
-            # Set the marker
-            specan.set_marker(1, rf_freq[j] * 1e9)
-            time.sleep(0.5)
+                # Set the lo frequency
+                lo_freq = (rf_freq[j] + if_freq[i]) / 4
+                lo_mxg.set_frequency(lo_freq * 1e9)
+                time.sleep(0.5)
 
-            raw_pout.append(specan.get_power(1))
-            if_frequencies.append(if_freq[i])
-            lo_frequencies.append(lo_freq)
-            rf_frequencies.append(rf_freq[j])
+                # Set the marker
+                specan.set_marker(1, rf_freq[j] * 1e9)
+                time.sleep(0.5)
+
+                raw_pout.append(specan.get_power(1))
+                if_frequencies.append(if_freq[i])
+                lo_frequencies.append(lo_freq)
+                rf_frequencies.append(rf_freq[j])
+                lo_power.append(lo_pin[k])
 
     # Add a new page to the workbook
     worksheet_upconversion = workbook.add_worksheet('Up_Conversion')
@@ -124,7 +130,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
         worksheet_upconversion.write(row, 3, raw_pout[i])
         worksheet_upconversion.write(row, 4, raw_pout[i] + rf_loss)
         worksheet_upconversion.write(row, 5, if_pin)
-        worksheet_upconversion.write(row, 6, lo_pin)
+        worksheet_upconversion.write(row, 6, lo_power[i])
         worksheet_upconversion.write(row, 7, raw_pout[i] + rf_loss - if_pin)
 
     # Return the sheet
@@ -210,7 +216,7 @@ def downconversion_sweep(workbook, if_freq, lo_freq, rf_freq, rf_pin, lo_pin, rf
 # params:   if_freq, rf_freq, sideband, mult
 # returns:  lo_freq
 ##########################################################################################################
-def synth_freq_gen(if_freq, rf_freq, sideband, mult):
+def synth_freq_gen(if_freq, rf_freq, sideband):
     """
     if_freq = list of IF frequencies
     rf_freq = list of RF frequencies
@@ -224,10 +230,10 @@ def synth_freq_gen(if_freq, rf_freq, sideband, mult):
     for i in range(0, len(if_freq)):
         for j in range(0, len(rf_freq)):
             if sideband == "upper":
-                calculated_freq = (rf_freq[j] - if_freq[i]) / mult
+                calculated_freq = (rf_freq[j] - if_freq[i])
                 lo_freq.append(calculated_freq)
             if sideband == "lower":
-                calculated_freq = (rf_freq[j] + if_freq[i]) / mult
+                calculated_freq = (rf_freq[j] + if_freq[i])
                 lo_freq.append(calculated_freq)
             else:
                 return "Invalid Sideband"
@@ -820,10 +826,10 @@ def main():
     rf_freq_ghz = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46]
 
     # Generates a list of LO frequencies calculated from the the IF and RF frequencies
-    lo_freq_ghz = synth_freq_gen(if_freq_ghz, rf_freq_ghz, "lower", 4)
+    lo_freq_ghz = synth_freq_gen(if_freq_ghz, rf_freq_ghz, "lower")
 
     # LO power input definition
-    lo_input_dbm = 15  # LO Input Power is typically 15 dBm, defined in the datasheet
+    lo_input_dbm = [13, 15, 17, 19]  # LO Input Power is typically 15 dBm, defined in the datasheet
 
     # RF or IF power max are both 20 dBm
     if_upc_input_dbm = 0  # Upconvert IF power input, this is to match datasheet parameters
@@ -836,28 +842,28 @@ def main():
 
     # Define the cable loss parameters
     # Need to remeasure with the new cables
-    if_cable_loss_db = 0.5
-    lo_cable_loss_db = 0.5
-    rf_cable_loss_db = 0.5
+    if_cable_loss_db = 0.7
+    lo_cable_loss_db = 0.7
+    rf_cable_loss_db = 0.7
 
     # Define the PCB loss parameters
-    if_upc_pcb_loss_db = 0.5
-    if_dnc_pcb_loss_db = 0.5
-    lo_pcb_loss_db = 0.5
-    rf_pcb_loss_db = 0.5
+    if_upc_pcb_loss_db = 0
+    if_dnc_pcb_loss_db = 0
+    lo_pcb_loss_db = 0
+    rf_pcb_loss_db = 0
 
     # Cable Loss parameters for the combiner and cables
-    path1_loss_5 = 0.5
-    path2_loss_5 = 0.5
-    path1_loss_40 = 0.5
-    path2_loss_40 = 0.5
+    path1_loss_5 = 0.7
+    path2_loss_5 = 0.7
+    path1_loss_40 = 0.7
+    path2_loss_40 = 0.7
 
     out_cable_loss_5 = 1
-    out_cable_loss_40 = 3.3
+    out_cable_loss_40 = 1
 
     # Define the maximum input values
-    upc_if_max_pin = 5  # There is not a set value for this
-    dnc_rf_max_pin = 5  # There is not a set value for this
+    upc_if_max_pin = 18  # There is not a set value for this
+    dnc_rf_max_pin = 18  # There is not a set value for this
 
     # Initialize the test equipment
     if_rf_mxg = SignalGenerator('10.13.23.221')
