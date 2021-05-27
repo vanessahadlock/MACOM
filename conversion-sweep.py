@@ -69,6 +69,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
     rf_frequencies = []
     lo_power = []
     raw_pout = []
+    rf_losses = []
 
     # Set the mxg power levels
     if_mxg.set_amplitude(if_pin + if_loss)
@@ -80,6 +81,8 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
     for i in range(0, len(if_freq)):
         # Set the IF mxg
         if_mxg.set_frequency(if_freq[i] * 1e9)
+        time.sleep(0.5)
+        if_mxg.set_amplitude(if_pin + if_loss[i])
         time.sleep(0.5)
 
         for k in range(0, len(lo_pin)):
@@ -106,6 +109,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
                 lo_frequencies.append(lo_freq)
                 rf_frequencies.append(rf_freq[j])
                 lo_power.append(lo_pin[k])
+                rf_losses.append(rf_loss[j])
 
     # Add a new page to the workbook
     worksheet_upconversion = workbook.add_worksheet('Up_Conversion')
@@ -128,10 +132,10 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
         worksheet_upconversion.write(row, 1, lo_frequencies[i])
         worksheet_upconversion.write(row, 2, rf_frequencies[i])
         worksheet_upconversion.write(row, 3, raw_pout[i])
-        worksheet_upconversion.write(row, 4, raw_pout[i] + rf_loss)
+        worksheet_upconversion.write(row, 4, raw_pout[i] + rf_loss[i])
         worksheet_upconversion.write(row, 5, if_pin)
         worksheet_upconversion.write(row, 6, lo_power[i])
-        worksheet_upconversion.write(row, 7, raw_pout[i] + rf_loss - if_pin)
+        worksheet_upconversion.write(row, 7, raw_pout[i] + rf_loss[i] - if_pin)
 
     # Return the sheet
     return worksheet_upconversion
@@ -842,9 +846,9 @@ def main():
 
     # Define the cable loss parameters
     # Need to remeasure with the new cables
-    if_cable_loss_db = 0.7
-    lo_cable_loss_db = 0.7
-    rf_cable_loss_db = 0.7
+    if_cable_loss_db = [0.64, 0.58]
+    lo_cable_loss_db = 3
+    rf_cable_loss_db = [2.01, 2.18, 2.29, 2.47, 2.34, 2.60, 2.65, 2.55, 2.73, 2.70, 2.77, 2.90, 2.90, 2.93, 3.04, 3.14, 3.30, 3.45, 3.44, 3.32, 3.58, 3.51, 3.73, 4.08, 4.36, 4.43, 4.75, 5, 5.25, 5.5]
 
     # Define the PCB loss parameters
     if_upc_pcb_loss_db = 0
@@ -899,9 +903,6 @@ def main():
     test = input("Run what test? \n")
 
     if test == "UPCONVERT":
-        # Adjusting the cable loss values to use the ip3 setup
-        if_cable_loss_db = path1_loss_5
-        rf_cable_loss_db = out_cable_loss_40
 
         # Run the test
         upconversion_sweep(
@@ -919,9 +920,6 @@ def main():
             rf_cable_loss_db)
 
     if test == "DOWNCONVERT":
-        # Adjusting the cable loss values to use the ip3 setup
-        rf_cable_loss_db = path1_loss_40
-        if_cable_loss_db = out_cable_loss_5
 
         # Run the test
         downconversion_sweep(
