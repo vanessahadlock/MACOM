@@ -93,7 +93,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
                 time.sleep(0.5)
 
                 # Set the lo frequency
-                lo_freq = (rf_freq[j] + if_freq[i]) / 4
+                lo_freq = (rf_freq[j] + if_freq[i])
                 lo_mxg.set_frequency(lo_freq * 1e9)
                 time.sleep(0.5)
 
