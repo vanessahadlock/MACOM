@@ -80,7 +80,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
         if_mxg.set_frequency(if_freq[i] * 1e9)
         time.sleep(0.5)
         # Set the mxg power levels
-        if_mxg.set_amplitude(if_pin + if_loss[i])
+        if_mxg.set_amplitude(if_pin + if_loss)
         time.sleep(0.5)
 
         for k in range(0, len(lo_pin)):
@@ -174,7 +174,7 @@ def downconversion_sweep(workbook, if_freq, lo_freq, rf_freq, rf_pin, lo_pin, rf
             time.sleep(0.5)
 
             # Set the lo frequency
-            lo_freq = (rf_freq[j] + if_freq[i]) / 4
+            lo_freq = (rf_freq[j] + if_freq[i])
             lo_mxg.set_frequency(lo_freq * 1e9)
             time.sleep(0.5)
 
@@ -825,7 +825,7 @@ def main():
     # Defining the test parameters
 
     # IF frequency definition
-    if_freq_ghz = [5.25, 5.57]
+    if_freq_ghz = [1]
 
     # RF frequency definition
     rf_freq_ghz = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46]
@@ -847,7 +847,7 @@ def main():
 
     # Define the cable loss parameters
     # Need to remeasure with the new cables
-    if_cable_loss_db = [0.64, 0.58]
+    if_cable_loss_db = 0.6  # [0.64, 0.58]
     lo_cable_loss_db = 3
     rf_cable_loss_db = [2.01, 2.18, 2.29, 2.47, 2.34, 2.60, 2.65, 2.55, 2.73, 2.70, 2.77, 2.90, 2.90, 2.93, 3.04, 3.14, 3.30, 3.45, 3.44, 3.32, 3.58, 3.51, 3.73, 4.08, 4.36, 4.43, 4.75, 5, 5.25, 5.5]
 
