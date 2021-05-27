@@ -130,10 +130,10 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
         worksheet_upconversion.write(row, 1, lo_frequencies[i])
         worksheet_upconversion.write(row, 2, rf_frequencies[i])
         worksheet_upconversion.write(row, 3, raw_pout[i])
-        worksheet_upconversion.write(row, 4, raw_pout[i] + rf_loss[i])
+        worksheet_upconversion.write(row, 4, raw_pout[i] + rf_losses[i])
         worksheet_upconversion.write(row, 5, if_pin)
         worksheet_upconversion.write(row, 6, lo_power[i])
-        worksheet_upconversion.write(row, 7, raw_pout[i] + rf_loss[i] - if_pin)
+        worksheet_upconversion.write(row, 7, raw_pout[i] + rf_losses[i] - if_pin)
 
     # Return the sheet
     return worksheet_upconversion
@@ -151,6 +151,9 @@ def downconversion_sweep(workbook, if_freq, lo_freq, rf_freq, rf_pin, lo_pin, rf
     lo_frequencies = []
     rf_frequencies = []
     raw_pout = []
+    lo_power = []
+    raw_pout = []
+    rf_losses = []
 
     # Set the mxg power levels
     rf_mxg.set_amplitude(rf_pin + rf_loss)
