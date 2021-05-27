@@ -129,7 +129,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
     # Dump the data into the worksheet
     for i in range(0, len(raw_pout)):
         row = row + 1
-        worksheet_upconversion.write(row, 0, if_freq[i])
+        worksheet_upconversion.write(row, 0, if_frequencies[i])
         worksheet_upconversion.write(row, 1, lo_frequencies[i])
         worksheet_upconversion.write(row, 2, rf_frequencies[i])
         worksheet_upconversion.write(row, 3, raw_pout[i])
