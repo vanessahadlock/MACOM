@@ -79,8 +79,6 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
     if_mxg.on()
     lo_mxg.on()
 
-    if_mxg.set_frequency(if_freq * 1e9)
-
     for i in range(0, len(if_pin)):
 
         # Set the IF mxg
