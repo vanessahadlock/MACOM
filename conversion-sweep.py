@@ -71,9 +71,6 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
     raw_pout = []
     rf_losses = []
 
-    # Set the mxg power levels
-    if_mxg.set_amplitude(if_pin + if_loss)
-
     # Turn on the mxgs
     if_mxg.on()
     lo_mxg.on()
@@ -82,6 +79,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
         # Set the IF mxg
         if_mxg.set_frequency(if_freq[i] * 1e9)
         time.sleep(0.5)
+        # Set the mxg power levels
         if_mxg.set_amplitude(if_pin + if_loss[i])
         time.sleep(0.5)
 
