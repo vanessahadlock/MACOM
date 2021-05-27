@@ -615,11 +615,11 @@ def tx_oip3(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_mxg_1, if_mx
     worksheet_upconversion_ip3.write(row, 5, 'Low Main Tone Pout (dBm)')
     worksheet_upconversion_ip3.write(row, 6, 'High Main Tone Pout (dBm)')
     worksheet_upconversion_ip3.write(row, 7, 'High IM Tone Pout (dBm)')
-    worksheet_upconversion_ip3.write(row, 8, 'ADMV1139 TX Low OIP3 (dBm)')
-    worksheet_upconversion_ip3.write(row, 9, 'ADMV1139 TX High OIP3 (dBm)')
-    worksheet_upconversion_ip3.write(row, 10, 'ADMV1139 TX Average OIP3 (dBm)')
-    worksheet_upconversion_ip3.write(row, 11, 'ADMV1139 TX Conversion Gain Low Tone (dB)')
-    worksheet_upconversion_ip3.write(row, 12, 'ADMV1139 TX Conversion Gain High Tone OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 8, 'MAMX-011054 TX Low OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 9, 'MAMX-011054 TX High OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 10, 'MAMX-011054 TX Average OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 11, 'MAMX-011054 TX Conversion Gain Low Tone (dB)')
+    worksheet_upconversion_ip3.write(row, 12, 'MAMX-011054 TX Conversion Gain High Tone OIP3 (dBm)')
 
     # Dump the data into the worksheet
     for i in range(0, len(raw_pout_tone_low)):
@@ -752,11 +752,11 @@ def rx_oip3(workbook, if_freq, lo_freq, rf_freq, rf_pin, lo_pin, rf_mxg_1, rf_mx
     worksheet_upconversion_ip3.write(row, 5, 'Low Main Tone Pout (dBm)')
     worksheet_upconversion_ip3.write(row, 6, 'High Main Tone Pout (dBm)')
     worksheet_upconversion_ip3.write(row, 7, 'High IM Tone Pout (dBm)')
-    worksheet_upconversion_ip3.write(row, 8, 'ADMV1139 RX Low OIP3 (dBm)')
-    worksheet_upconversion_ip3.write(row, 9, 'ADMV1139 RX High OIP3 (dBm)')
-    worksheet_upconversion_ip3.write(row, 10, 'ADMV1139 RX Average OIP3 (dBm)')
-    worksheet_upconversion_ip3.write(row, 11, 'ADMV1139 RX Conversion Gain Low Tone (dB)')
-    worksheet_upconversion_ip3.write(row, 12, 'ADMV1139 RX Conversion Gain High Tone OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 8, 'MAMX-011054 RX Low OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 9, 'MAMX-011054 RX High OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 10, 'MAMX-011054 RX Average OIP3 (dBm)')
+    worksheet_upconversion_ip3.write(row, 11, 'MAMX-011054 RX Conversion Gain Low Tone (dB)')
+    worksheet_upconversion_ip3.write(row, 12, 'MAMX-011054 RX Conversion Gain High Tone OIP3 (dBm)')
 
     # Dump the data into the worksheet
     for i in range(0, len(raw_pout_tone_low)):
@@ -888,11 +888,11 @@ def main():
 
     # Set up the workbook
     current_time = datetime.datetime.now()
-    spreadsheet_name_str = 'ADMV1139_{}'.format(current_time.strftime("%Y-%m-%d_%H-%M"))
+    spreadsheet_name_str = 'MAMX-011054_{}'.format(current_time.strftime("%Y-%m-%d_%H-%M"))
     workbook, spreadsheet_name = spreadsheet_setup(spreadsheet_name_str)
 
     # Create the test notes page
-    test_notes = 'ADMV1139IF-EVALZ Test Board Characterization'
+    test_notes = 'MAMX-011054-EVALZ Test Board Characterization'
     spreadsheet_test_info(
         workbook,
         test_notes,
