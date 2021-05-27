@@ -64,28 +64,33 @@ def spreadsheet_test_info(workbook, test_notes, spreadsheet_name):
 def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_mxg, lo_mxg, specan, if_loss, lo_loss, rf_loss):
 
     # Empty list for the measurements
+    if_power = []
     if_frequencies = []
     lo_frequencies = []
     rf_frequencies = []
-    lo_power = []
     raw_pout = []
     rf_losses = []
+
+    # Set the LO mxg
+    lo_mxg.set_amplitude(lo_pin + lo_loss)
+    time.sleep(0.5)
 
     # Turn on the mxgs
     if_mxg.on()
     lo_mxg.on()
 
-    for i in range(0, len(if_freq)):
+    if_mxg.set_frequency(if_freq * 1e9)
+
+    for i in range(0, len(if_pin)):
+
         # Set the IF mxg
-        if_mxg.set_frequency(if_freq[i] * 1e9)
-        time.sleep(0.5)
-        # Set the mxg power levels
-        if_mxg.set_amplitude(if_pin + if_loss)
+        if_mxg.set_frequency(if_freq[i]*1e9)
         time.sleep(0.5)
 
-        for k in range(0, len(lo_pin)):
-            # Set the LO mxg
-            lo_mxg.set_amplitude(lo_pin[k] + lo_loss)
+        for k in range(0, len(if_pin)):
+
+            # Set the mxg power levels
+            if_mxg.set_amplitude(if_pin[k] + if_loss)
             time.sleep(0.5)
 
             for j in range(0, len(rf_freq)):
@@ -94,7 +99,7 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
                 time.sleep(0.5)
 
                 # Set the lo frequency
-                lo_freq = (rf_freq[j] + if_freq[i])
+                lo_freq = (rf_freq[j] + if_freq)
                 lo_mxg.set_frequency(lo_freq * 1e9)
                 time.sleep(0.5)
 
@@ -103,10 +108,10 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
                 time.sleep(0.5)
 
                 raw_pout.append(specan.get_power(1))
-                if_frequencies.append(if_freq[i])
+                if_power.append(if_pin[k])
                 lo_frequencies.append(lo_freq)
                 rf_frequencies.append(rf_freq[j])
-                lo_power.append(lo_pin[k])
+                if_frequencies.append(if_freq[i])
                 rf_losses.append(rf_loss[j])
 
     # Add a new page to the workbook
@@ -126,14 +131,14 @@ def upconversion_sweep(workbook, if_freq, lo_freq, rf_freq, if_pin, lo_pin, if_m
     # Dump the data into the worksheet
     for i in range(0, len(raw_pout)):
         row = row + 1
-        worksheet_upconversion.write(row, 0, if_frequencies[i])
+        worksheet_upconversion.write(row, 0, if_freq[i])
         worksheet_upconversion.write(row, 1, lo_frequencies[i])
         worksheet_upconversion.write(row, 2, rf_frequencies[i])
         worksheet_upconversion.write(row, 3, raw_pout[i])
         worksheet_upconversion.write(row, 4, raw_pout[i] + rf_losses[i])
-        worksheet_upconversion.write(row, 5, if_pin)
-        worksheet_upconversion.write(row, 6, lo_power[i])
-        worksheet_upconversion.write(row, 7, raw_pout[i] + rf_losses[i] - if_pin)
+        worksheet_upconversion.write(row, 5, if_power[i])
+        worksheet_upconversion.write(row, 6, lo_pin)
+        worksheet_upconversion.write(row, 7, raw_pout[i] + rf_losses[i] - if_power[i])
 
     # Return the sheet
     return worksheet_upconversion
@@ -825,7 +830,7 @@ def main():
     # Defining the test parameters
 
     # IF frequency definition
-    if_freq_ghz = [1]
+    if_freq_ghz = [5.25, 5.57]
 
     # RF frequency definition
     rf_freq_ghz = [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46]
@@ -834,10 +839,10 @@ def main():
     lo_freq_ghz = synth_freq_gen(if_freq_ghz, rf_freq_ghz, "lower")
 
     # LO power input definition
-    lo_input_dbm = [13, 15, 17, 19]  # LO Input Power is typically 15 dBm, defined in the datasheet
+    lo_input_dbm = 15  # LO Input Power is typically 15 dBm, defined in the datasheet
 
     # RF or IF power max are both 20 dBm
-    if_upc_input_dbm = 0  # Upconvert IF power input, this is to match datasheet parameters
+    if_upc_input_dbm = [-30, -27, -25, -23, -20, -17, -15, -13, -10, -5, 0, 5, 7, 10]  # Upconvert IF power input, this is to match datasheet parameters
     rf_dnc_input_dbm = 0  # Downconvert RF power input, this is to match datasheet parameters
 
     if_tx_p1db_start_dbm = -15  # Adjusting the starting pin to save time
